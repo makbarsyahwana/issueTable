@@ -1,6 +1,15 @@
-import React, { Fragment, useEffect, useMemo, useState } from "react";
-import { useTable, usePagination, useExpanded, useSortBy, useFilters } from "react-table";
-import ClockLoader from "react-spinners/ClockLoader";
+import React, { 
+  Fragment, 
+  useEffect, 
+  useMemo 
+} from "react";
+import { 
+  useTable, 
+  usePagination, 
+  useExpanded, 
+  useSortBy, 
+  useFilters 
+} from "react-table";
 import { css } from "@emotion/react";
 import { matchSorter } from "match-sorter";
 import "./style.css";
@@ -14,14 +23,6 @@ import {
   NextButtonIcon,
   BackButtonIcon,
 } from "./paginationStyle";
-
-
-
-const override = css`
-  display: block;
-  margin: 0 auto;
-  border-color: red;
-`;
 
 const TableComponent = ({
   columns,
@@ -45,6 +46,7 @@ const TableComponent = ({
               setFilter(e.target.value || undefined) // Set undefined to remove the filter entirely
             }}
             placeholder={`Search ${count} records...`}
+            className="bg-white shadow p-2 flex"
           />
         )
     }
@@ -53,12 +55,10 @@ const TableComponent = ({
         return matchSorter(rows, filterValue, { keys: [row => row.values[id]] })
     }
 
-    fuzzyTextFilterFn.autoRemove = val => !val
-
     const filterTypes = React.useMemo(
         () => ({
           // Add a new fuzzyTextFilterFn filter type.
-          fuzzyText: fuzzyTextFilterFn,
+          fuzzyText: fuzzyTextFilterFn.autoRemove = val => !val,
           // Or, override the default text filter to use
           // "startWith"
           text: (rows, id, filterValue) => {
@@ -123,23 +123,12 @@ const TableComponent = ({
     usePagination
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchData && fetchData({ pageIndex, pageSize });
-  }, [fetchData, pageIndex, pageSize]);
+  }, [pageIndex]);
 
   return (
     <Fragment>
-      {loading ? (
-        <div>
-          {" "}
-          <ClockLoader
-            color={"#000000"}
-            loading={loading}
-            css={override}
-            size={150}
-          />
-        </div>
-      ) : (
         <div className="flex flex-col w-full">
           <div className="-my-2 py-2 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
             <div className="align-middle inline-block min-w-full shadow sm:rounded-lg border-b border-gray-200"></div>
@@ -186,8 +175,7 @@ const TableComponent = ({
                 })}
               </tbody>
             </table>
-            {console.log(isPaginated, canPreviousPage, canNextPage)}
-            {console.log(nextPage())}
+            
             {isPaginated && (
               <Pagination>
                 <PaginationIndex>
@@ -215,7 +203,6 @@ const TableComponent = ({
             )}
           </div>
         </div>
-      )}
     </Fragment>
   );
 };
